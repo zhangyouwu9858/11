@@ -24,6 +24,8 @@
         <module>smart-cloud-register</module>
         <module>smart-cloud-auth</module>
         <module>smart-cloud-gateway</module>
+        <module>smart-cloud-config</module>
+        <module>smart-cloud-service</module>
     </modules>
 
     <build>

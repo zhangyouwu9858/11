@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: auth
+          uri: lb://smart-cloud-auth
+          predicates:
+            - Path=/auth/**
+        - id: service
+          uri: lb://smart-cloud-service
+          predicates:
+            - Path=/service/**
+      default-filters:
+        - StripPrefix=1

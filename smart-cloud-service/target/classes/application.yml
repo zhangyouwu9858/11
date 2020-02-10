@@ -1,8 +1,8 @@
 server:
-  port: 8001
+  port: 8003
 spring:
   application:
-    name: smart-cloud-auth
+    name: smart-cloud-service
 
 management:
   endpoints:
