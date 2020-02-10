@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="${debug:-false}" scan="true" scanPeriod="10 seconds">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+
+    <property name="log_file" value="${log_path:-${log_temp:-${java.io.tmpdir:-/tmp}}}/${springAppName:-spring}.log}"/>
+
+    <property name="console_log_pattern" value="[%d{yyyy-MM-dd HH:mm:ss}] -- [%-5p]: [%c] -- %m%n"/>
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${console_log_pattern}</pattern>
+            <charset>utf8</charset>
+        </encoder>
+    </appender>
+
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>172.16.1.51:5044</destination>
+        <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+            <customFields>{"appname":"${springAppName}"}</customFields>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="logstash"/>
+    </root>
+
+    <springProfile name="prod">
+
+        <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${log_file}</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${log_file}.%d{yyyy-MM-dd}.gz</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${console_log_pattern}</pattern>
+                <charset>utf8</charset>
+            </encoder>
+        </appender>
+
+        <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+            <destination>172.16.1.51:5044</destination>
+            <encoder charset="UTF-8" class="net.logstash.logback.encoder.LogstashEncoder">
+                <customFields>{"appname":"${springAppName}"}</customFields>
+            </encoder>
+        </appender>
+
+        <root level="info">
+            <appender-ref ref="logstash"/>
+            <appender-ref ref="file"/>
+        </root>
+    </springProfile>
+
+</configuration>
